@@ -1,7 +1,7 @@
 {
   "name": "freshnest-backend",
   "version": "1.0.0",
-  "description": "backend of my project",
+  "description": "Backend for FreshNet, handling grocery delivery services including user management, ordering, and product handling",
   "homepage": "https://github.com/lovish-ab/freshnest-backend#readme",
   "bugs": {
     "url": "https://github.com/lovish-ab/freshnest-backend/issues"
