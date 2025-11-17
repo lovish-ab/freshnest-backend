@@ -9,7 +9,8 @@ export default (sequelize, DataTypes) => {
   }, {
     tableName: 'orders',
     underscored: true,
-    paranoid: true
+    paranoid: true,
+    
   });
 
   return Order;

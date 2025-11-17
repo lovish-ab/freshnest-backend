@@ -5,7 +5,7 @@ import UserAddressModel from "./UserAddress.js";
 import ProductModel from "./Product.js";
 import OrderModel from "./Order.js";
 import CartModel from "./Cart.js";
-import CartItemModel from "./cartItem.js";
+import CartItemModel from "./CartItem.js";
 
 const User = UserModel(sequelize, DataTypes);
 const UserAddress = UserAddressModel(sequelize, DataTypes);

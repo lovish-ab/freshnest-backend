@@ -1,29 +1,30 @@
 export default (sequelize, DataTypes) => {
   const Product = sequelize.define("Product", {
-    product_name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    product_description: {
+    description: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    product_price: {
+    price: {
       type: DataTypes.FLOAT,
       allowNull: false
-    },
-    offer_price: {
-      type: DataTypes.FLOAT,
-      allowNull: true
     },
     image: {
       type: DataTypes.STRING,
       allowNull: true
     },
-    
+
   }, {
     tableName: "products",
-    timestamps: true
+    timestamps: true,
+    underscored: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    deletedAt: "deleted_at",
+    paranoid: true
   });
 
   return Product;

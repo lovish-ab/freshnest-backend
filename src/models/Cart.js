@@ -9,7 +9,12 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: "carts",
-      timestamps: true
+      timestamps: true,
+      underscored: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+    deletedAt: "deleted_at",
+    paranoid: true
     }
   );
 

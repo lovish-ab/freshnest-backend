@@ -11,6 +11,7 @@ export default (sequelize, DataTypes) => {
     tableName: 'users',
     underscored: true,
     paranoid: true
+    
   });
 
   User.beforeCreate(async (user) => {
