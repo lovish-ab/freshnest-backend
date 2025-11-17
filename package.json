@@ -1,0 +1,30 @@
+{
+  "name": "freshnest-backend",
+  "version": "1.0.0",
+  "description": "Backend for FreshNet, handling grocery delivery services including user management, ordering, and product handling",
+  "homepage": "https://github.com/lovish-ab/freshnest-backend#readme",
+  "bugs": {
+    "url": "https://github.com/lovish-ab/freshnest-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lovish-ab/freshnest-backend.git"
+  },
+  "license": "ISC",
+  "author": "lovish",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
