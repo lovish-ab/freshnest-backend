@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import authRoutes from './routes/authRoutes.js';
+
 
 const app = express();
 app.use(cors({
@@ -7,6 +9,9 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => res.json({ status: 'ok' }));
 
