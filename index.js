@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 5001;
 
 (async () => {
   try {
-    // Ensure uploads directory exists
     ensureUploadsDir();
     
     await sequelize.authenticate();
