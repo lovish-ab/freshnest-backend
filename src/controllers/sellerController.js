@@ -213,9 +213,7 @@ const getOrders = async (req, res) => {
       ordersMap.get(orderId).items.push({
         productId: item.Product.id,
         productName: item.Product.name,
-        productImage: item.Product.imagePath
-          ? `${req.protocol}://${req.get('host')}${item.Product.imagePath}`
-          : null,
+        productImage: item.Product.imagePath || null,
         quantity: item.quantity,
         price: parseFloat(item.price),
       });

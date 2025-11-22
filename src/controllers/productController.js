@@ -22,9 +22,7 @@ const getAllProducts = async (req, res) => {
       name: product.name,
       mrp: parseFloat(product.mrp),
       currentPrice: parseFloat(product.currentPrice),
-      imagePath: product.imagePath
-        ? `${req.protocol}://${req.get('host')}${product.imagePath}`
-        : null,
+      imagePath: product.imagePath || null,
       seller: {
         id: product.Seller.id,
         sellerName: product.Seller.User.fullName,
@@ -62,9 +60,7 @@ const getProductById = async (req, res) => {
       name: product.name,
       mrp: parseFloat(product.mrp),
       currentPrice: parseFloat(product.currentPrice),
-      imagePath: product.imagePath
-        ? `${req.protocol}://${req.get('host')}${product.imagePath}`
-        : null,
+      imagePath: product.imagePath || null,
       seller: {
         id: product.Seller.id,
         sellerName: product.Seller.User.fullName,

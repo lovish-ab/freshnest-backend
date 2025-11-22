@@ -316,9 +316,7 @@ const getOrders = async (req, res) => {
       const items = (order.OrderItems || []).map((item) => ({
         productId: item.Product?.id || item.productId,
         productName: item.Product?.name || 'Unknown Product',
-        productImage: item.Product?.imagePath
-          ? `${req.protocol}://${req.get('host')}${item.Product.imagePath}`
-          : null,
+        productImage: item.Product?.imagePath || null,
         quantity: item.quantity,
         price: parseFloat(item.price),
       }));
