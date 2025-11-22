@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const { uploadFileToS3 } = require('../utils/s3');
 const { Product, Seller, Order, OrderItem, User } = require('../models');
 
 const getProducts = async (req, res) => {
@@ -19,9 +19,7 @@ const getProducts = async (req, res) => {
       name: product.name,
       mrp: parseFloat(product.mrp),
       currentPrice: parseFloat(product.currentPrice),
-      imagePath: product.imagePath
-        ? `${req.protocol}://${req.get('host')}${product.imagePath}`
-        : null,
+      imagePath: product.imagePath || null,
     }));
 
     res.json(formattedProducts);
@@ -51,7 +49,16 @@ const addProduct = async (req, res) => {
 
     let imagePath = null;
     if (req.file) {
-      imagePath = `/uploads/product_images/${req.file.filename}`;
+      try {
+        const s3Result = await uploadFileToS3(
+          req.file.buffer,
+          `product-images/${Date.now()}-${req.file.originalname}`,
+          req.file.mimetype
+        );
+        imagePath = s3Result.Location;
+      } catch (err) {
+        return res.status(500).json({ error: 'Failed to upload image to S3' });
+      }
     }
 
     const product = await Product.create({
@@ -69,9 +76,7 @@ const addProduct = async (req, res) => {
         name: product.name,
         mrp: parseFloat(product.mrp),
         currentPrice: parseFloat(product.currentPrice),
-        imagePath: product.imagePath
-          ? `${req.protocol}://${req.get('host')}${product.imagePath}`
-          : null,
+        imagePath: product.imagePath || null,
       },
     });
   } catch (error) {
@@ -101,19 +106,21 @@ const updateProduct = async (req, res) => {
         .json({ error: 'Current price must be less than or equal to MRP' });
     }
 
-    if (req.file && product.imagePath) {
-      const oldImagePath = path.join(__dirname, '..', product.imagePath);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-    }
-
     const updateData = {};
     if (name) updateData.name = name;
     if (mrp) updateData.mrp = parseFloat(mrp);
     if (currentPrice) updateData.currentPrice = parseFloat(currentPrice);
     if (req.file) {
-      updateData.imagePath = `/uploads/product_images/${req.file.filename}`;
+      try {
+        const s3Result = await uploadFileToS3(
+          req.file.buffer,
+          `product-images/${Date.now()}-${req.file.originalname}`,
+          req.file.mimetype
+        );
+        updateData.imagePath = s3Result.Location;
+      } catch (err) {
+        return res.status(500).json({ error: 'Failed to upload image to S3' });
+      }
     }
 
     await product.update(updateData);
@@ -125,9 +132,7 @@ const updateProduct = async (req, res) => {
         name: product.name,
         mrp: parseFloat(product.mrp),
         currentPrice: parseFloat(product.currentPrice),
-        imagePath: product.imagePath
-          ? `${req.protocol}://${req.get('host')}${product.imagePath}`
-          : null,
+        imagePath: product.imagePath || null,
       },
     });
   } catch (error) {
@@ -150,12 +155,7 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    if (product.imagePath) {
-      const imagePath = path.join(__dirname, '..', product.imagePath);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
+    // Optionally, delete image from S3 if needed (not implemented here)
 
     await product.destroy();
 
