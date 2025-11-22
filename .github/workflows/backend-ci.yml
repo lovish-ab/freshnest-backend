@@ -17,6 +17,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
             cd /home/ubuntu/freshnest-backend
             git pull origin working-demo
             npm install
