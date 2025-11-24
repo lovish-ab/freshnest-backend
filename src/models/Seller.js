@@ -16,6 +16,8 @@ const Seller = sequelize.define('Seller', {
       key: 'id',
     },
   },
+}, {
+  paranoid: true,
 });
 
 module.exports = Seller;

@@ -27,6 +27,8 @@ const Order = sequelize.define('Order', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+}, {
+  paranoid: true,
 });
 
 module.exports = Order;

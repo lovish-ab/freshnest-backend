@@ -155,7 +155,7 @@ const deleteProduct = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Optionally, delete image from S3 if needed (not implemented here)
+    
 
     await product.destroy();
 

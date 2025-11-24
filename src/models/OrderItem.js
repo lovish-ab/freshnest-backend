@@ -42,6 +42,8 @@ const OrderItem = sequelize.define('OrderItem', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
+}, {
+  paranoid: true,
 });
 
 module.exports = OrderItem;
