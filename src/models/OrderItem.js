@@ -10,6 +10,7 @@ const OrderItem = sequelize.define('OrderItem', {
   orderId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'order_id',
     references: {
       model: 'Orders',
       key: 'id',
@@ -18,6 +19,7 @@ const OrderItem = sequelize.define('OrderItem', {
   productId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'product_id',
     references: {
       model: 'Products',
       key: 'id',
@@ -26,6 +28,7 @@ const OrderItem = sequelize.define('OrderItem', {
   sellerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'seller_id',
     references: {
       model: 'Sellers',
       key: 'id',
