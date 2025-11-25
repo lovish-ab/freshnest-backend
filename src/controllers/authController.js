@@ -18,7 +18,7 @@ const customerSignup = async (req, res) => {
 
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
+      return res.status(409).json({ error: 'Email already exists' });
     }
 
     const user = await User.create({
