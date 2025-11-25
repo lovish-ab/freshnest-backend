@@ -85,19 +85,34 @@ const getCart = async (userId) => {
     cart = await Cart.create({ userId, items: [] });
   }
 
-  return { items: cart.items || [] };
+  return { 
+    id: cart.id,
+    items: cart.items || [] 
+  };
 };
 
-const updateCart = async (userId, items) => {
-  let cart = await Cart.findOne({ where: { userId } });
-  
-  if (!cart) {
-    cart = await Cart.create({ userId, items: items || [] });
-  } else {
-    await cart.update({ items: items || [] });
+const updateCart = async (userId, cartId, items) => {
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    throw new Error('Cart items cannot be empty');
   }
 
-  return { items: cart.items };
+  const cart = await Cart.findOne({ 
+    where: { 
+      id: cartId,
+      userId 
+    } 
+  });
+  
+  if (!cart) {
+    throw new Error('Cart not found');
+  }
+
+  await cart.update({ items });
+
+  return { 
+    id: cart.id,
+    items: cart.items 
+  };
 };
 
 const clearCart = async (userId) => {

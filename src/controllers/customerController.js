@@ -33,11 +33,19 @@ const getCart = async (req, res) => {
 const updateCart = async (req, res) => {
   try {
     const { items } = req.body;
+    const cartId = req.params.id;
 
-    const result = await customerService.updateCart(req.user.id, items);
+    const result = await customerService.updateCart(req.user.id, cartId, items);
 
-    res.json({ message: 'Cart updated successfully', items: result.items });
+    res.json({ 
+      message: 'Cart updated successfully', 
+      id: result.id,
+      items: result.items 
+    });
   } catch (error) {
+    if (error.message === 'Cart items cannot be empty' || error.message === 'Cart not found') {
+      return res.status(400).json({ error: error.message });
+    }
     res.status(500).json({ error: error.message });
   }
 };

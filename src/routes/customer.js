@@ -8,7 +8,7 @@ router.post('/orders', authenticate, isCustomer, customerController.placeOrder);
 
 router.get('/cart', authenticate, isCustomer, customerController.getCart);
 
-router.put('/cart', authenticate, isCustomer, customerController.updateCart);
+router.put('/cart/:id', authenticate, isCustomer, customerController.updateCart);
 
 router.delete('/cart', authenticate, isCustomer, customerController.clearCart);
 
