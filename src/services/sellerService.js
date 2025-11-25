@@ -145,7 +145,6 @@ const getOrders = async (userId) => {
   }
 
   const orderItems = await OrderItem.findAll({
-    where: { sellerId: seller.id },
     include: [
       {
         model: Order,
@@ -159,7 +158,9 @@ const getOrders = async (userId) => {
       },
       {
         model: Product,
+        where: { sellerId: seller.id },
         attributes: ['id', 'name', 'imagePath'],
+        required: true,
       },
     ],
     order: [[Order, 'orderDate', 'DESC']],

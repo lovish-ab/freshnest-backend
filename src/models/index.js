@@ -23,9 +23,6 @@ OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
 Product.hasMany(OrderItem, { foreignKey: 'productId' });
 OrderItem.belongsTo(Product, { foreignKey: 'productId' });
 
-Seller.hasMany(OrderItem, { foreignKey: 'sellerId' });
-OrderItem.belongsTo(Seller, { foreignKey: 'sellerId' });
-
 User.hasOne(Cart, { foreignKey: 'userId', onDelete: 'CASCADE' });
 Cart.belongsTo(User, { foreignKey: 'userId' });
 
