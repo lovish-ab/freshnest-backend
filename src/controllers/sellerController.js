@@ -43,9 +43,65 @@ const addProduct = async (req, res) => {
   }
 };
 
+const updateProduct = async (req, res) => {
+  try {
+    const { name, mrp, currentPrice } = req.body;
+
+    const product = await sellerService.updateProduct(
+      req.user.id,
+      req.params.id,
+      name,
+      mrp,
+      currentPrice,
+      req.file
+    );
+
+    res.json({
+      message: 'Product updated successfully',
+      product,
+    });
+  } catch (error) {
+    if (error.message === 'Seller profile not found' || error.message === 'Product not found') {
+      return res.status(404).json({ error: error.message });
+    }
+    if (error.message === 'Current price must be less than or equal to MRP') {
+      return res.status(400).json({ error: error.message });
+    }
+    if (error.message === 'Failed to upload image to S3') {
+      return res.status(500).json({ error: error.message });
+    }
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const result = await sellerService.deleteProduct(req.user.id, req.params.id);
+    res.json(result);
+  } catch (error) {
+    if (error.message === 'Seller profile not found' || error.message === 'Product not found') {
+      return res.status(404).json({ error: error.message });
+    }
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getOrders = async (req, res) => {
+  try {
+    const orders = await sellerService.getOrders(req.user.id);
+    res.json(orders);
+  } catch (error) {
+    if (error.message === 'Seller profile not found') {
+      return res.status(404).json({ error: error.message });
+    }
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   getProducts,
   addProduct,
+  updateProduct,
+  deleteProduct,
+  getOrders,
 };
-

@@ -25,15 +25,6 @@ const OrderItem = sequelize.define('OrderItem', {
       key: 'id',
     },
   },
-  sellerId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: 'seller_id',
-    references: {
-      model: 'Sellers',
-      key: 'id',
-    },
-  },
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -31,7 +31,6 @@ const placeOrder = async (customerId, items, shippingAddress) => {
 
       orderItemsData.push({
         productId: product.id,
-        sellerId: product.sellerId,
         quantity: item.quantity,
         price: product.currentPrice,
       });
@@ -51,7 +50,6 @@ const placeOrder = async (customerId, items, shippingAddress) => {
         {
           orderId: order.id,
           productId: itemData.productId,
-          sellerId: itemData.sellerId,
           quantity: itemData.quantity,
           price: itemData.price,
         },
@@ -122,18 +120,6 @@ const getOrders = async (customerId) => {
             model: Product,
             attributes: ['id', 'name', 'imagePath'],
             required: false,
-          },
-          {
-            model: Seller,
-            attributes: ['id'],
-            required: false,
-            include: [
-              {
-                model: User,
-                attributes: ['fullName'],
-                required: false,
-              },
-            ],
           },
         ],
       },

@@ -32,5 +32,16 @@ router.post(
   sellerController.addProduct
 );
 
+router.put(
+  '/products/:id',
+  authenticate,
+  isSeller,
+  upload.single('image'),
+  sellerController.updateProduct
+);
+
+router.delete('/products/:id', authenticate, isSeller, sellerController.deleteProduct);
+
+router.get('/orders', authenticate, isSeller, sellerController.getOrders);
 
 module.exports = router;
