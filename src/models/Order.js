@@ -10,6 +10,7 @@ const Order = sequelize.define('Order', {
   customerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'customer_id',
     references: {
       model: 'Users',
       key: 'id',
@@ -18,14 +19,17 @@ const Order = sequelize.define('Order', {
   shippingAddress: {
     type: DataTypes.TEXT,
     allowNull: false,
+    field: 'shipping_address',
   },
   totalPrice: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    field: 'total_price',
   },
   orderDate: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
+    field: 'order_date',
   },
 }, {
   paranoid: true,

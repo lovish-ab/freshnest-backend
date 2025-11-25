@@ -10,6 +10,7 @@ const Product = sequelize.define('Product', {
   sellerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'seller_id',
     references: {
       model: 'Sellers',
       key: 'id',
@@ -29,6 +30,7 @@ const Product = sequelize.define('Product', {
   currentPrice: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
+    field: 'current_price',
     validate: {
       min: 0,
       isLessThanOrEqualMRP(value) {
@@ -41,6 +43,7 @@ const Product = sequelize.define('Product', {
   imagePath: {
     type: DataTypes.STRING,
     allowNull: true,
+    field: 'image_path',
   },
 }, {
   paranoid: true,
