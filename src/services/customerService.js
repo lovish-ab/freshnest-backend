@@ -115,14 +115,25 @@ const updateCart = async (userId, cartId, items) => {
   };
 };
 
-const clearCart = async (userId) => {
-  const cart = await Cart.findOne({ where: { userId } });
+const clearCart = async (userId, cartId) => {
+  const cart = await Cart.findOne({ 
+    where: { 
+      id: cartId,
+      userId 
+    } 
+  });
   
-  if (cart) {
-    await cart.update({ items: [] });
+  if (!cart) {
+    throw new Error('Cart not found');
   }
 
-  return { message: 'Cart cleared successfully' };
+  await cart.update({ items: [] });
+
+  return { 
+    message: 'Cart cleared successfully',
+    id: cart.id,
+    items: []
+  };
 };
 
 const getOrders = async (customerId) => {

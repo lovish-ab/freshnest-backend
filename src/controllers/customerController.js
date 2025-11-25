@@ -52,9 +52,13 @@ const updateCart = async (req, res) => {
 
 const clearCart = async (req, res) => {
   try {
-    const result = await customerService.clearCart(req.user.id);
+    const cartId = req.params.id;
+    const result = await customerService.clearCart(req.user.id, cartId);
     res.json(result);
   } catch (error) {
+    if (error.message === 'Cart not found') {
+      return res.status(404).json({ error: error.message });
+    }
     res.status(500).json({ error: error.message });
   }
 };

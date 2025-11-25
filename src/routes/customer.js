@@ -10,7 +10,7 @@ router.get('/cart', authenticate, isCustomer, customerController.getCart);
 
 router.put('/cart/:id', authenticate, isCustomer, customerController.updateCart);
 
-router.delete('/cart', authenticate, isCustomer, customerController.clearCart);
+router.delete('/cart/:id', authenticate, isCustomer, customerController.clearCart);
 
 router.get('/orders', authenticate, isCustomer, customerController.getOrders);
 
