@@ -1,103 +1,30 @@
-const { Op } = require('sequelize');
-const { Order, OrderItem, Product, Seller, User, Address, Cart, sequelize } = require('../models');
-
+const customerService = require('../services/customerService');
 
 const placeOrder = async (req, res) => {
   try {
     const { items, shippingAddress } = req.body;
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'Cart items are required' });
-    }
+    const order = await customerService.placeOrder(req.user.id, items, shippingAddress);
 
-    if (!shippingAddress) {
-      return res.status(400).json({ error: 'Shipping address is required' });
-    }
-
-    const transaction = await sequelize.transaction();
-
-    try {
-      let totalPrice = 0;
-      const orderItemsData = [];
-
-      for (const item of items) {
-        const product = await Product.findByPk(item.productId, {
-          include: [{ model: Seller }],
-          transaction,
-        });
-
-        if (!product) {
-          await transaction.rollback();
-          return res.status(400).json({ error: `Product ${item.productId} not found` });
-        }
-
-        const itemPrice = parseFloat(product.currentPrice) * item.quantity;
-        totalPrice += itemPrice;
-
-        orderItemsData.push({
-          productId: product.id,
-          sellerId: product.sellerId,
-          quantity: item.quantity,
-          price: product.currentPrice,
-        });
-      }
-
-      const order = await Order.create(
-        {
-          customerId: req.user.id,
-          shippingAddress,
-          totalPrice,
-        },
-        { transaction }
-      );
-
-      for (const itemData of orderItemsData) {
-        await OrderItem.create(
-          {
-            orderId: order.id,
-            productId: itemData.productId,
-            sellerId: itemData.sellerId,
-            quantity: itemData.quantity,
-            price: itemData.price,
-          },
-          { transaction }
-        );
-      }
-
-      const cart = await Cart.findOne({ where: { userId: req.user.id }, transaction });
-      if (cart) {
-        await cart.update({ items: [] }, { transaction });
-      }
-
-      await transaction.commit();
-
-      res.status(201).json({
-        message: 'Order placed successfully',
-        order: {
-          id: order.id,
-          totalPrice: parseFloat(order.totalPrice),
-          status: order.status,
-          orderDate: order.orderDate,
-        },
-      });
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
+    res.status(201).json({
+      message: 'Order placed successfully',
+      order,
+    });
   } catch (error) {
+    if (error.message === 'Cart items are required' || error.message === 'Shipping address is required') {
+      return res.status(400).json({ error: error.message });
+    }
+    if (error.message.includes('Product') && error.message.includes('not found')) {
+      return res.status(400).json({ error: error.message });
+    }
     res.status(500).json({ error: error.message });
   }
 };
 
 const getCart = async (req, res) => {
   try {
-    let cart = await Cart.findOne({ where: { userId: req.user.id } });
-    
-    if (!cart) {
-      cart = await Cart.create({ userId: req.user.id, items: [] });
-    }
-
-    res.json({ items: cart.items || [] });
+    const result = await customerService.getCart(req.user.id);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -107,15 +34,9 @@ const updateCart = async (req, res) => {
   try {
     const { items } = req.body;
 
-    let cart = await Cart.findOne({ where: { userId: req.user.id } });
-    
-    if (!cart) {
-      cart = await Cart.create({ userId: req.user.id, items: items || [] });
-    } else {
-      await cart.update({ items: items || [] });
-    }
+    const result = await customerService.updateCart(req.user.id, items);
 
-    res.json({ message: 'Cart updated successfully', items: cart.items });
+    res.json({ message: 'Cart updated successfully', items: result.items });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -123,13 +44,8 @@ const updateCart = async (req, res) => {
 
 const clearCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ where: { userId: req.user.id } });
-    
-    if (cart) {
-      await cart.update({ items: [] });
-    }
-
-    res.json({ message: 'Cart cleared successfully' });
+    const result = await customerService.clearCart(req.user.id);
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -137,62 +53,14 @@ const clearCart = async (req, res) => {
 
 const getOrders = async (req, res) => {
   try {
-    const orders = await Order.findAll({
-      where: { customerId: req.user.id },
-      include: [
-        {
-          model: OrderItem,
-          required: false,
-          include: [
-            {
-              model: Product,
-              attributes: ['id', 'name', 'imagePath'],
-              required: false,
-            },
-            {
-              model: Seller,
-              attributes: ['id'],
-              required: false,
-              include: [
-                {
-                  model: User,
-                  attributes: ['fullName'],
-                  required: false,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      order: [['orderDate', 'DESC']],
-    });
-
-    const formattedOrders = orders.map((order) => {
-      const items = (order.OrderItems || []).map((item) => ({
-        productId: item.Product?.id || item.productId,
-        productName: item.Product?.name || 'Unknown Product',
-        productImage: item.Product?.imagePath || null,
-        quantity: item.quantity,
-        price: parseFloat(item.price),
-      }));
-
-      return {
-        id: order.id,
-        shippingAddress: order.shippingAddress,
-        totalPrice: parseFloat(order.totalPrice),
-        orderDate: order.orderDate,
-        items: items,
-      };
-    });
-
-    res.json(formattedOrders);
+    const orders = await customerService.getOrders(req.user.id);
+    res.json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 module.exports = {
-
   placeOrder,
   getCart,
   updateCart,
