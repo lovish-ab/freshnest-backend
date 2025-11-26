@@ -34,11 +34,17 @@ const sellerSignup = async (req, res) => {
       user: result.user,
     });
   } catch (error) {
-    if (error.message === 'All fields are required' || error.message === 'Email already exists') {
-      return res.status(400).json({ error: error.message });
-    }
-    res.status(500).json({ error: error.message });
+  if (error.message === 'All fields are required') {
+    return res.status(400).json({ error: 'All fields are required' });
   }
+
+  if (error.message === 'Email already exists') {
+    return res.status(409).json({ error: 'Email already exists' }); 
+  }
+
+  return res.status(500).json({ error: error.message });
+}
+
 };
 
 const signin = async (req, res) => {
